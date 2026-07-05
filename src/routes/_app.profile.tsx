@@ -50,6 +50,7 @@ function ProfilePage() {
 
   async function handleUpdateProfile(e: React.FormEvent) {
     e.preventDefault();
+    if (!user) return;
     setUpdating(true);
     try {
       await updateProfile(user, { displayName });
@@ -62,7 +63,7 @@ function ProfilePage() {
   }
 
   async function handlePasswordReset() {
-    if (!user.email) return;
+    if (!user || !user.email) return;
     setSendingReset(true);
     try {
       const { auth } = getFirebase();
