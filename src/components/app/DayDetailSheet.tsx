@@ -47,6 +47,7 @@ export function DayDetailSheet({ date, data, office, onClose, onSaved }: Props) 
 
   if (!date) return null;
   const dateId = toDateId(date);
+  const isToday = dateId === toDateId(new Date());
   const hrs = hoursBetween(data?.punchInTime, data?.punchOutTime);
   const status = data ? calcStatus(data, office) : "absent";
 
@@ -108,41 +109,47 @@ export function DayDetailSheet({ date, data, office, onClose, onSaved }: Props) 
           <VerifyChip label={`Out ${fmtTime(data?.punchOutTime)}`} verified={data?.punchOutVerified} />
         </div>
 
-        <div className="grid gap-4 p-4 pt-2">
-          <div>
-            <Label htmlFor="in">Punch in</Label>
-            <Input id="in" type="datetime-local" value={inTime}
-              onChange={(e) => setInTime(e.target.value)} className="mt-1 h-11" />
-          </div>
-          <div>
-            <Label htmlFor="out">Punch out</Label>
-            <Input id="out" type="datetime-local" value={outTime}
-              onChange={(e) => setOutTime(e.target.value)} className="mt-1 h-11" />
-          </div>
-          <div>
-            <Label>Override status</Label>
-            <Select value={manual} onValueChange={(v) => setManual(v as Status | "auto")}>
-              <SelectTrigger className="mt-1 h-11"><SelectValue /></SelectTrigger>
-              <SelectContent>
-                <SelectItem value="auto">Auto (based on punches)</SelectItem>
-                <SelectItem value="present">Present</SelectItem>
-                <SelectItem value="late">Late</SelectItem>
-                <SelectItem value="half_day">Half Day</SelectItem>
-                <SelectItem value="absent">Absent</SelectItem>
-                <SelectItem value="leave">Leave / Holiday</SelectItem>
-              </SelectContent>
-            </Select>
-          </div>
+        {isToday ? (
+          <div className="grid gap-4 p-4 pt-2">
+            <div>
+              <Label htmlFor="in">Punch in</Label>
+              <Input id="in" type="datetime-local" value={inTime}
+                onChange={(e) => setInTime(e.target.value)} className="mt-1 h-11" />
+            </div>
+            <div>
+              <Label htmlFor="out">Punch out</Label>
+              <Input id="out" type="datetime-local" value={outTime}
+                onChange={(e) => setOutTime(e.target.value)} className="mt-1 h-11" />
+            </div>
+            <div>
+              <Label>Override status</Label>
+              <Select value={manual} onValueChange={(v) => setManual(v as Status | "auto")}>
+                <SelectTrigger className="mt-1 h-11"><SelectValue /></SelectTrigger>
+                <SelectContent>
+                  <SelectItem value="auto">Auto (based on punches)</SelectItem>
+                  <SelectItem value="present">Present</SelectItem>
+                  <SelectItem value="late">Late</SelectItem>
+                  <SelectItem value="half_day">Half Day</SelectItem>
+                  <SelectItem value="absent">Absent</SelectItem>
+                  <SelectItem value="leave">Leave / Holiday</SelectItem>
+                </SelectContent>
+              </Select>
+            </div>
 
-          <div className="mt-2 flex gap-2">
-            <Button variant="outline" onClick={clearDay} disabled={busy} className="h-11">
-              <Trash2 className="h-4 w-4" /> Clear
-            </Button>
-            <Button onClick={save} disabled={busy} className="h-11 flex-1">
-              Save changes
-            </Button>
+            <div className="mt-2 flex gap-2">
+              <Button variant="outline" onClick={clearDay} disabled={busy} className="h-11">
+                <Trash2 className="h-4 w-4" /> Clear
+              </Button>
+              <Button onClick={save} disabled={busy} className="h-11 flex-1">
+                Save changes
+              </Button>
+            </div>
           </div>
-        </div>
+        ) : (
+          <div className="p-6 text-center text-sm text-muted-foreground">
+            Attendance records can only be updated on the current date.
+          </div>
+        )}
       </SheetContent>
     </Sheet>
   );
