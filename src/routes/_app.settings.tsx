@@ -1,4 +1,4 @@
-import { createFileRoute } from "@tanstack/react-router";
+import { createFileRoute, redirect } from "@tanstack/react-router";
 import { useEffect, useState } from "react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
@@ -12,6 +12,9 @@ import { getFirebase } from "@/lib/firebase";
 import { signOut } from "firebase/auth";
 
 export const Route = createFileRoute("/_app/settings")({
+  beforeLoad: () => {
+    throw redirect({ to: "/dashboard" });
+  },
   head: () => ({ meta: [{ title: "Settings — Attendance Tracker" }] }),
   component: SettingsPage,
 });
