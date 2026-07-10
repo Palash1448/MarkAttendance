@@ -17,7 +17,7 @@ export const DEFAULT_OFFICE: OfficeSettings = {
   radiusMeters: 150,
   workStart: "09:00",
   workEnd: "18:00",
-  graceMinutes: 15,
+  graceMinutes: 30,
   halfDayMinHours: 4,
   fullDayMinHours: 8,
 };
@@ -53,7 +53,8 @@ export function calcStatus(doc: AttendanceDoc, cfg: OfficeSettings): Status {
   if (!doc.punchInTime) return "absent";
   const d = new Date(doc.punchInTime);
   const punchInMin = d.getHours() * 60 + d.getMinutes();
-  const graceCutoff = minutesFromClock(cfg.workStart) + cfg.graceMinutes;
+  const configCutoff = minutesFromClock(cfg.workStart) + cfg.graceMinutes;
+  const graceCutoff = Math.max(configCutoff, 9 * 60 + 30);
   const hrs = hoursBetween(doc.punchInTime, doc.punchOutTime ?? null);
   if (punchInMin > graceCutoff) return "late";
   if (doc.punchOutTime) {
